@@ -48,6 +48,11 @@ See [`ARCHITECTURE.md`](./ARCHITECTURE.md) for a visual schematic of the system'
 - `App/Program.cs` — Wires up dependencies and runs a demo
 - **Protocol-Agnostic API Abstraction** — All service-to-service and workflow step communication is handled via generic API interfaces and injected via factories (see `IServiceApi<TRequest, TResponse>` and `IServiceApiFactory`).
 
+## Factory Abstractions
+- **`IWorkflowStepFactory`** — Creates and injects dependencies into workflow steps, enabling dynamic step instantiation and configuration.
+- **`ILoadBalancerFactory`** — Produces load balancer instances, allowing for pluggable and configurable load balancing strategies.
+- **`IServiceApiFactory`** — Injects protocol-agnostic API adapters (e.g., HTTP/gRPC) into steps and services, decoupling business logic from transport/protocol.
+
 ## Design Principles
 - **Interface-based**: All major components are defined by interfaces for extensibility.
 - **Async and context-aware**: Simulates real-world distributed system behavior.
