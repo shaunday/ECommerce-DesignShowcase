@@ -16,9 +16,9 @@ namespace Orchestrator.Steps
             await Task.CompletedTask;
         }
 
-        public async Task CompensateAsync(Core.Workflow.WorkflowContext context)
+        public async Task CompensateAsync(Core.Workflow.IWorkflowContext context, Exception sagaFailure, ICompensatableStep failedStep)
         {
-            Console.WriteLine("ArrangeShippingStep: Compensating (cancel shipping)");
+            Console.WriteLine($"ArrangeShippingStep: Compensating (cancel shipping) due to failure in {failedStep?.GetType().Name}: {sagaFailure.Message}");
             await Task.CompletedTask;
         }
     }

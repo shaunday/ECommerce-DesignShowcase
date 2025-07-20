@@ -5,12 +5,6 @@
 ---
 
 ## Advanced Saga & Workflow Patterns
-- [x] Add correlation/tracking abstractions for sagas (unique sagaId/correlationId, pass through all steps and logs).
-- [x] Demonstrate passing and handling step results between saga steps.
-- [x] Implement workflow context with validation and transformation layers.
-- [x] Add factory patterns for load balancers and workflow steps.
-- [x] Support pre and post transformation for individual workflow steps.
-- [x] Add timeout and compensation trigger abstractions for saga steps (per-step timeout and compensation trigger policies, with centralized compensation logic in orchestrator).
 - [ ] Design saga state persistence abstraction (ISagaStateStore) to illustrate how sagas survive restarts and resume workflows.
 - [ ] Showcase parallel and conditional execution patterns for saga steps within the orchestrator.
 - [ ] Illustrate event-driven saga progression (steps waiting for external events to proceed).
@@ -20,47 +14,14 @@
 ---
 
 ## Production-Grade System Design TODO
-
-### Persistence & State Management
 - [ ] Design durable database abstraction layers for all services (e.g., SQL, NoSQL in production).
-- [ ] Document backup and restore strategies.
-- [ ] Illustrate database migration patterns.
-
-### Networking & APIs
-- [ ] Add HTTP/gRPC API abstraction layers for all services.
-- [ ] Document service discovery and registration patterns.
-- [ ] Showcase API versioning and documentation strategies (Swagger/OpenAPI in production).
-
-### Security
-- [ ] Add authentication abstraction (OAuth2, JWT, etc.).
-- [ ] Add authorization abstraction (RBAC/ABAC).
-- [ ] Document transport security (TLS/SSL) requirements.
-- [ ] Illustrate secrets management strategies for credentials.
-- [ ] Document audit logging patterns for sensitive operations.
-
-### Monitoring & Observability
-- [ ] Add centralized logging abstraction (e.g., ELK stack in production).
-- [ ] Add distributed tracing abstraction (e.g., OpenTelemetry in production).
-- [ ] Add metrics and alerting abstraction layers (Prometheus, Grafana in production).
-
-### Deployment & Operations
-- [ ] Document containerization strategies (Docker in production).
-- [ ] Illustrate orchestration patterns (Kubernetes, Docker Compose in production).
-- [ ] Document CI/CD pipeline design.
-- [ ] Showcase zero-downtime deployment strategies (blue/green, canary).
-- [ ] Document disaster recovery and multi-region support patterns.
-- [ ] Illustrate cost and resource optimization strategies.
-
-### Scalability & Reliability
-- [ ] Add auto-scaling abstraction for stateless services.
-- [ ] Document caching layer patterns.
-- [ ] Add circuit breaker and fallback logic abstraction.
-- [ ] Document dead-letter queue patterns for failed messages.
-
-### Testing
-- [ ] Document unit, integration, and contract testing strategies.
-- [ ] Illustrate chaos testing patterns for resilience.
-- [ ] Document automated test execution in CI/CD.
+- [ ] Design HTTP/gRPC API abstraction layers for all services.
+- [ ] Design authentication and authorization abstractions (OAuth2, JWT, RBAC/ABAC).
+- [ ] Design centralized logging, tracing, and metrics abstraction layers (e.g., ELK stack, OpenTelemetry, Prometheus in production).
+- [ ] Design auto-scaling, circuit breaker, and fallback logic abstractions.
+- [ ] Design dead-letter queue and retry policy abstractions.
+- [ ] Design disaster recovery and multi-region support patterns.
+- [ ] Design caching and service discovery abstraction layers.
 
 ---
 **Note:** The main system architecture diagram is now maintained in [`ARCHITECTURE.md`](./ARCHITECTURE.md). 

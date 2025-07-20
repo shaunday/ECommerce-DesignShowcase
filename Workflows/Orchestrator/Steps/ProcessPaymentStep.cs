@@ -34,9 +34,9 @@ namespace Orchestrator.Steps
             }
         }
 
-        public async Task CompensateAsync(Core.Workflow.WorkflowContext context)
+        public async Task CompensateAsync(Core.Workflow.IWorkflowContext context, Exception sagaFailure, ICompensatableStep failedStep)
         {
-            Console.WriteLine("ProcessPaymentStep: Compensating (refund payment)");
+            Console.WriteLine($"ProcessPaymentStep: Compensating (refund payment) due to failure in {failedStep?.GetType().Name}: {sagaFailure.Message}");
             var data = context.Data;
             if (_balancer != null && _serviceBus != null)
             {

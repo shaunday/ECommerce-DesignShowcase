@@ -95,24 +95,21 @@ namespace Orchestrator
             }
             catch (Exception ex)
             {
-                bool shouldCompensate = true;
-                if (executedSteps.Count > 0)
+                var failedStep = executedSteps.Count > 0 ? executedSteps.Peek() : null;
+                while (executedSteps.Count > 0)
                 {
-                    var lastStep = executedSteps.Peek();
-                    if (lastStep is Core.Workflow.ICompensationTriggerProvider compProvider && compProvider.CompensationTriggerPolicy != null)
+                    var prevStep = executedSteps.Pop();
+                    bool shouldCompensateStep = true;
+                    if (prevStep is Core.Workflow.ICompensationTriggerProvider compProvider && compProvider.CompensationTriggerPolicy != null)
                     {
-                        shouldCompensate = compProvider.CompensationTriggerPolicy.ShouldTriggerCompensation(ex, context);
+                        shouldCompensateStep = compProvider.CompensationTriggerPolicy.ShouldTriggerCompensation(ex, context);
+                    }
+                    if (shouldCompensateStep)
+                    {
+                        await prevStep.CompensateAsync(context, ex, failedStep);
                     }
                 }
-                if (shouldCompensate)
-                {
-                    while (executedSteps.Count > 0)
-                    {
-                        var prevStep = executedSteps.Pop();
-                        await prevStep.CompensateAsync(context);
-                    }
-                    Console.WriteLine($"SagaOrchestrator: Saga '{sagaName}' compensated");
-                }
+                Console.WriteLine($"SagaOrchestrator: Saga '{sagaName}' compensated");
                 Console.WriteLine($"SagaOrchestrator: Error in saga '{sagaName}': {ex.Message}");
                 return false;
             }
