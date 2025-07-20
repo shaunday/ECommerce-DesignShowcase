@@ -5,8 +5,13 @@
 ---
 
 ## Advanced Saga & Workflow Patterns
+- [x] Add correlation/tracking abstractions for sagas (unique sagaId/correlationId, pass through all steps and logs).
+- [x] Demonstrate passing and handling step results between saga steps.
+- [x] Implement workflow context with validation and transformation layers.
+- [x] Add factory patterns for load balancers and workflow steps.
+- [x] Support pre and post transformation for individual workflow steps.
+- [x] Add timeout and compensation trigger abstractions for saga steps (per-step timeout and compensation trigger policies, with centralized compensation logic in orchestrator).
 - [ ] Design saga state persistence abstraction (ISagaStateStore) to illustrate how sagas survive restarts and resume workflows.
-- [ ] Add timeout and compensation trigger abstractions for saga steps (e.g., demonstrate how compensation could be triggered if a step takes too long).
 - [ ] Showcase parallel and conditional execution patterns for saga steps within the orchestrator.
 - [ ] Illustrate event-driven saga progression (steps waiting for external events to proceed).
 - [ ] Ensure idempotency and safe re-execution patterns for saga steps (track completed steps, allow retries in design).

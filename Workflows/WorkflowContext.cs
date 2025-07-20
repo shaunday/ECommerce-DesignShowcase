@@ -44,4 +44,24 @@ namespace Core.Workflow
         IWorkflowPreTransformer? PreTransformer { get; }
         IWorkflowPostTransformer? PostTransformer { get; }
     }
+
+    public interface IStepTimeoutPolicy
+    {
+        TimeSpan GetTimeout(IWorkflowContext context);
+    }
+
+    public interface ICompensationTriggerPolicy
+    {
+        bool ShouldTriggerCompensation(Exception ex, IWorkflowContext context);
+    }
+
+    public interface ITimeoutPolicyProvider
+    {
+        IStepTimeoutPolicy? TimeoutPolicy { get; }
+    }
+
+    public interface ICompensationTriggerProvider
+    {
+        ICompensationTriggerPolicy? CompensationTriggerPolicy { get; }
+    }
 } 

@@ -57,7 +57,29 @@ namespace Orchestrator
                         var balancer = _balancerFactory.CreateBalancer("default");
                         infraStep.SetInfrastructure(balancer, _serviceBus);
                     }
-                    await step.ExecuteAsync(context);
+
+                    // Timeout policy
+                    TimeSpan? timeout = null;
+                    if (step is Core.Workflow.ITimeoutPolicyProvider timeoutProvider && timeoutProvider.TimeoutPolicy != null)
+                    {
+                        timeout = timeoutProvider.TimeoutPolicy.GetTimeout(context);
+                    }
+
+                    Task execTask = step.ExecuteAsync(context);
+                    if (timeout.HasValue)
+                    {
+                        if (await Task.WhenAny(execTask, Task.Delay(timeout.Value)) != execTask)
+                        {
+                            // Throw timeout exception to be caught by the catch block below
+                            throw new TimeoutException($"Step timed out after {timeout.Value.TotalSeconds} seconds");
+                        }
+                        // Await the task to propagate any exceptions
+                        await execTask;
+                    }
+                    else
+                    {
+                        await execTask;
+                    }
                     // Per-step post-transformation
                     if (step is Core.Workflow.IValidatableStep validatableStepPost)
                     {
@@ -73,13 +95,25 @@ namespace Orchestrator
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"SagaOrchestrator: Error in saga '{sagaName}': {ex.Message}. Compensating...");
-                while (executedSteps.Count > 0)
+                bool shouldCompensate = true;
+                if (executedSteps.Count > 0)
                 {
-                    var step = executedSteps.Pop();
-                    await step.CompensateAsync(context);
+                    var lastStep = executedSteps.Peek();
+                    if (lastStep is Core.Workflow.ICompensationTriggerProvider compProvider && compProvider.CompensationTriggerPolicy != null)
+                    {
+                        shouldCompensate = compProvider.CompensationTriggerPolicy.ShouldTriggerCompensation(ex, context);
+                    }
                 }
-                Console.WriteLine($"SagaOrchestrator: Saga '{sagaName}' compensated");
+                if (shouldCompensate)
+                {
+                    while (executedSteps.Count > 0)
+                    {
+                        var prevStep = executedSteps.Pop();
+                        await prevStep.CompensateAsync(context);
+                    }
+                    Console.WriteLine($"SagaOrchestrator: Saga '{sagaName}' compensated");
+                }
+                Console.WriteLine($"SagaOrchestrator: Error in saga '{sagaName}': {ex.Message}");
                 return false;
             }
         }
