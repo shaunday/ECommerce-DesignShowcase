@@ -10,8 +10,6 @@
 - [ ] Showcase parallel and conditional execution patterns for saga steps within the orchestrator.
 - [ ] Illustrate event-driven saga progression (steps waiting for external events to proceed).
 - [ ] Ensure idempotency and safe re-execution patterns for saga steps (track completed steps, allow retries in design).
-- [ ] Add correlation/tracking abstractions for sagas (unique sagaId/correlationId, pass through all steps and logs).
-- [ ] Demonstrate passing and handling step results between saga steps.
 - [ ] Document custom failure policy patterns for saga steps (retry, skip, escalate, etc.).
 
 ---

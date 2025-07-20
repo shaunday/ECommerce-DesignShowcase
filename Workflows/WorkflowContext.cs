@@ -1,6 +1,12 @@
 namespace Core.Workflow
 {
-    public class WorkflowContext
+    public interface IWorkflowContext
+    {
+        string CorrelationId { get; set; }
+        object Data { get; set; }
+    }
+
+    public class WorkflowContext : IWorkflowContext
     {
         public string CorrelationId { get; set; }
         public object Data { get; set; }
@@ -10,5 +16,32 @@ namespace Core.Workflow
             CorrelationId = correlationId;
             Data = data;
         }
+    }
+
+    public interface IWorkflowValidator
+    {
+        void Validate(IWorkflowContext context);
+    }
+
+    public interface IWorkflowPreTransformer
+    {
+        IWorkflowContext PreTransform(IWorkflowContext context);
+    }
+
+    public interface IWorkflowPostTransformer
+    {
+        IWorkflowContext PostTransform(IWorkflowContext context);
+    }
+
+    public interface IWorkflowStepFactory
+    {
+        ICompensatableStep CreateStep(string stepType, IWorkflowContext context);
+    }
+
+    public interface IValidatableStep : ICompensatableStep
+    {
+        IWorkflowValidator? Validator { get; }
+        IWorkflowPreTransformer? PreTransformer { get; }
+        IWorkflowPostTransformer? PostTransformer { get; }
     }
 } 

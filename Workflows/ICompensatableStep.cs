@@ -4,7 +4,7 @@ namespace Orchestrator.Steps
 {
     public interface ICompensatableStep
     {
-        Task ExecuteAsync(Core.Workflow.WorkflowContext context);
-        Task CompensateAsync(Core.Workflow.WorkflowContext context);
+        Task ExecuteAsync(Core.Workflow.IWorkflowContext context);
+        Task CompensateAsync(Core.Workflow.IWorkflowContext context);
     }
 } 

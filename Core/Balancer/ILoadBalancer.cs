@@ -6,4 +6,9 @@ namespace Core.Balancer
     {
         Task<string> SelectInstanceAsync(string serviceName);
     }
+
+    public interface ILoadBalancerFactory
+    {
+        ILoadBalancer CreateBalancer(string balancerType);
+    }
 } 
