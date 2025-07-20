@@ -18,9 +18,10 @@ namespace Orchestrator.Steps
             _serviceBus = serviceBus;
         }
 
-        public async Task ExecuteAsync(object data)
+        public async Task ExecuteAsync(Core.Workflow.WorkflowContext context)
         {
             Console.WriteLine("ReserveInventoryStep: Executing");
+            var data = context.Data;
             if (_balancer != null && _serviceBus != null)
             {
                 var instance = await _balancer.SelectInstanceAsync("InventoryService");
@@ -33,9 +34,10 @@ namespace Orchestrator.Steps
             }
         }
 
-        public async Task CompensateAsync(object data)
+        public async Task CompensateAsync(Core.Workflow.WorkflowContext context)
         {
             Console.WriteLine("ReserveInventoryStep: Compensating (releasing inventory)");
+            var data = context.Data;
             if (_balancer != null && _serviceBus != null)
             {
                 var instance = await _balancer.SelectInstanceAsync("InventoryService");

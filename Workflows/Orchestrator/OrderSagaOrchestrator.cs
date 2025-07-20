@@ -24,6 +24,7 @@ namespace Orchestrator
         {
             Console.WriteLine($"SagaOrchestrator: Starting saga '{sagaName}'");
             var executedSteps = new Stack<ICompensatableStep>();
+            var context = new Core.Workflow.WorkflowContext(sagaName, data);
             try
             {
                 foreach (var step in _steps)
@@ -33,7 +34,7 @@ namespace Orchestrator
                     {
                         infraStep.SetInfrastructure(_balancer, _serviceBus);
                     }
-                    await step.ExecuteAsync(data);
+                    await step.ExecuteAsync(context);
                     executedSteps.Push(step);
                 }
                 Console.WriteLine($"SagaOrchestrator: Saga '{sagaName}' completed successfully");
@@ -45,7 +46,7 @@ namespace Orchestrator
                 while (executedSteps.Count > 0)
                 {
                     var step = executedSteps.Pop();
-                    await step.CompensateAsync(data);
+                    await step.CompensateAsync(context);
                 }
                 Console.WriteLine($"SagaOrchestrator: Saga '{sagaName}' compensated");
                 return false;

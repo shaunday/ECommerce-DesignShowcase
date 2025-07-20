@@ -9,14 +9,14 @@ namespace Orchestrator.Steps
 {
     public class ArrangeShippingStep : Core.Workflow.ICompensatableStep
     {
-        public async Task ExecuteAsync(object data)
+        public async Task ExecuteAsync(Core.Workflow.WorkflowContext context)
         {
             Console.WriteLine("ArrangeShippingStep: Executing");
             // Simulate success
             await Task.CompletedTask;
         }
 
-        public async Task CompensateAsync(object data)
+        public async Task CompensateAsync(Core.Workflow.WorkflowContext context)
         {
             Console.WriteLine("ArrangeShippingStep: Compensating (cancel shipping)");
             await Task.CompletedTask;
