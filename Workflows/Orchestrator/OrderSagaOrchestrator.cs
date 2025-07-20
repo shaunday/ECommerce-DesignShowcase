@@ -11,19 +11,16 @@ namespace Orchestrator
     {
         private readonly List<ICompensatableStep> _steps;
         private readonly ILoadBalancerFactory _balancerFactory;
-        private readonly IServiceBus _serviceBus;
         private readonly Core.Workflow.IWorkflowStepFactory? _stepFactory;
         private readonly Core.Workflow.IWorkflowValidator? _validator;
         private readonly Core.Workflow.IWorkflowTransformer? _transformer;
 
-        public OrderSagaOrchestrator(List<ICompensatableStep> steps, ILoadBalancerFactory balancerFactory, IServiceBus serviceBus, Core.Workflow.IWorkflowStepFactory? stepFactory = null, Core.Workflow.IWorkflowValidator? validator = null, Core.Workflow.IWorkflowTransformer? transformer = null)
+        public OrderSagaOrchestrator(List<ICompensatableStep> steps, ILoadBalancerFactory balancerFactory, Core.Workflow.IWorkflowStepFactory? stepFactory = null, Core.Workflow.IWorkflowValidator? validator = null)
         {
             _steps = steps;
             _balancerFactory = balancerFactory;
-            _serviceBus = serviceBus;
             _stepFactory = stepFactory;
             _validator = validator;
-            _transformer = transformer;
         }
 
         public async Task<object?> ExecuteSagaAsync(string sagaName, object data)
@@ -52,10 +49,9 @@ namespace Orchestrator
                             context = (Core.Workflow.WorkflowContext)validatableStep.PreTransformer.PreTransform(context);
                         }
                     }
-                    if (step is IInfrastructureAwareStep infraStep)
+                    if (_stepFactory != null)
                     {
-                        var balancer = _balancerFactory.CreateBalancer("default");
-                        infraStep.SetInfrastructure(balancer, _serviceBus);
+                        _stepFactory.InjectDependencies(step);
                     }
 
                     // Timeout policy

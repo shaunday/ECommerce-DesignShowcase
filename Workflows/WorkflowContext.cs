@@ -64,4 +64,9 @@ namespace Core.Workflow
     {
         ICompensationTriggerPolicy? CompensationTriggerPolicy { get; }
     }
+
+    public interface IServiceApiFactory
+    {
+        void InjectDependencies(object step);
+    }
 } 

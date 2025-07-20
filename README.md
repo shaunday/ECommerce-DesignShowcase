@@ -1,55 +1,63 @@
-# ShoppingFramework Microservices Skeleton (Stage 1)
+# ECommerce-DesignShowcase: Microservices Architecture Skeleton
 
 ## Overview
-This project is a modular, interface-driven skeleton for a distributed microservices system, designed for an online garments shop. It demonstrates key architectural patterns such as orchestration, load balancing, API gateway, service-to-service communication, and the saga pattern, all in C#.
+This project is a modular, interface-driven skeleton for a distributed microservices system, designed to showcase modern architectural patterns for workflow orchestration, service abstraction, and extensibility. It is intended as a learning guide and design reference, not a production-ready implementation.
 
-## Architecture
-- **Domain Services**: Each business domain (Catalog, Order, Payment, Inventory, Shipping, User) has its own interface and implementation in the `Services` directory.
-- **Service Bus**: Abstracts communication between services (`Core/ServiceBus`).
-- **Load Balancer**: Selects service instances in a round-robin, async, queue-based manner (`Core/Balancer`).
-- **API Gateway**: Central entry point for all requests, routes to orchestrator or services, manages correlation IDs (`Core/ApiGateway`).
-- **Saga Orchestrator**: Coordinates multi-step workflows with compensation logic (`Orchestrator/`).
-- **Compensatable Steps**: Each step is an interface-driven, injectable unit (`Orchestrator/Steps/`).
+## Architecture Highlights
+- **Domain Services**: Each business domain (Catalog, Order, Payment, Inventory, Shipping, User) is encapsulated behind interfaces and implementations in the `Services` directory.
+- **Load Balancer**: Pluggable, async, queue-based load balancer abstraction (`Core/Balancer`).
+- **API Gateway**: Central entry point for all requests, routes to orchestrator or services, manages correlation IDs (`Adapters/WebApi/ApiGateway`).
+- **Saga Orchestrator**: Coordinates multi-step workflows with advanced compensation logic (`Workflows/Orchestrator`).
+- **Compensatable Steps**: Each step is an interface-driven, injectable unit with support for validation, transformation, timeout, and compensation policies (`Workflows/Orchestrator/Steps`).
 - **Dependency Injection**: Simple DI container for wiring up dependencies (`Core/DependencyInjection`).
-- **Workflow Context**: Carries correlation IDs and workflow data for traceability (`Core/WorkflowContext.cs`).
+- **Workflow Context**: Strongly-typed, extensible context object for passing data, correlation IDs, and state through the workflow (`Workflows/WorkflowContext.cs`).
+- **Factory Patterns**: Factories for load balancers, workflow steps, and protocol-agnostic API adapters enable dynamic, configurable orchestration and service-to-service communication.
+- **Protocol-Agnostic API Abstraction**: All service-to-service and workflow step communication is handled via a generic API interface (e.g., `IServiceApi<TRequest, TResponse>`) and injected via factories, decoupling business logic from transport/protocol.
+
+## Advanced Saga & Workflow Patterns
+- Context propagation and correlation/tracking IDs throughout the workflow
+- Per-step validation and transformation (pre and post)
+- Per-step timeout and compensation trigger policies
+- Context-aware compensation: each step can compensate differently based on the failure reason and failed step
+- Centralized, extensible orchestrator with interface-driven design
+- Support for future patterns: parallel/conditional execution, event-driven progression, idempotency, and custom failure policies
+
+## Production-Grade System Design Goals
+- Durable database abstraction layers for all services (e.g., SQL, NoSQL in production)
+- HTTP/gRPC API abstraction layers for all services (define interfaces and adapters to decouple service logic from transport/protocol)
+- Authentication and authorization abstractions (OAuth2, JWT, RBAC/ABAC)
+- Centralized logging, tracing, and metrics abstraction layers (e.g., ELK stack, OpenTelemetry, Prometheus in production)
+- Auto-scaling, circuit breaker, and fallback logic abstractions
+- Dead-letter queue and retry policy abstractions
+- Disaster recovery and multi-region support patterns
+- Caching and service discovery abstraction layers
 
 ## System Diagram
 See [`ARCHITECTURE.md`](./ARCHITECTURE.md) for a visual schematic of the system's main relationships and flow.
 
 ## Key Components
-- `Core/ServiceBus/` — Service-to-service communication abstraction
 - `Core/Balancer/` — Async, queue-based load balancer
-- `Core/ApiGateway/` — API gateway/facade
+- `Adapters/WebApi/ApiGateway/` — API gateway/facade
 - `Core/DependencyInjection/` — Simple DI container
 - `Core/Auth/` — Authentication abstraction
 - `Core/ProductRepository/` — Product persistence abstraction
 - `Services/` — Per-domain service interfaces and implementations
 - `Services/Order/Validation/` — Order validation logic
-- `Orchestrator/` — Saga orchestrator and compensatable steps
+- `Workflows/Orchestrator/` — Saga orchestrator and compensatable steps
+- `Workflows/WorkflowContext.cs` — Workflow context and related abstractions
 - `App/Program.cs` — Wires up dependencies and runs a demo
-
-## Demo Usage
-The demo simulates:
-- An order fulfillment workflow (via saga orchestrator)
-- Compensation logic if a step fails
-- All dependencies wired up via DI
-
-To run the demo:
-1. Open the solution in your C# IDE (e.g., Visual Studio, VS Code).
-2. Build and run the project.
-3. Observe the console output for orchestration, load balancing, and saga compensation.
+- **Protocol-Agnostic API Abstraction** — All service-to-service and workflow step communication is handled via generic API interfaces and injected via factories (see `IServiceApi<TRequest, TResponse>` and `IServiceApiFactory`).
 
 ## Design Principles
 - **Interface-based**: All major components are defined by interfaces for extensibility.
 - **Async and context-aware**: Simulates real-world distributed system behavior.
 - **Separation of concerns**: Each component has a clear responsibility.
 - **Traceability**: Correlation IDs are used throughout the system.
-- **Saga Pattern**: Multi-step workflows with compensation logic for failure handling.
+- **Saga Pattern**: Multi-step workflows with advanced, context-aware compensation logic.
+- **Protocol-Agnostic Communication**: All service-to-service and workflow step calls are decoupled from transport/protocol via API abstractions and factories.
 
 ## What’s Next?
-- Implement advanced saga features (see `TODO.md`)
-- Add real networking, persistence, or error handling for deeper simulation.
-- Expand API gateway and orchestrator logic as needed.
+See [`TODO.md`](./TODO.md) for a detailed roadmap of advanced saga/workflow patterns and production-grade design abstractions to implement or extend.
 
 ---
-**Stage 1** focuses on architecture and simulation, not production-ready features. Perfect for learning, prototyping, or as a base for further development. 
+**Note:** This project is for design and learning purposes. It focuses on abstraction, documentation, and demonstration of patterns—not real infrastructure or production implementation. 

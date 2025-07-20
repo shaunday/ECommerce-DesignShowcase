@@ -10,7 +10,7 @@ namespace Orchestrator.Steps
     public class ProcessPaymentStep : Orchestrator.IInfrastructureAwareStep
     {
         private ILoadBalancer _balancer;
-        private IServiceBus _serviceBus;
+        private IServiceApi<PaymentRequest, PaymentResponse> _paymentApi;
 
         public void SetInfrastructure(ILoadBalancer balancer, IServiceBus serviceBus)
         {
@@ -18,19 +18,24 @@ namespace Orchestrator.Steps
             _serviceBus = serviceBus;
         }
 
-        public async Task ExecuteAsync(Core.Workflow.WorkflowContext context)
+        public void SetApi(IServiceApi<PaymentRequest, PaymentResponse> paymentApi)
+        {
+            _paymentApi = paymentApi;
+        }
+
+        public async Task ExecuteAsync(Core.Workflow.IWorkflowContext context)
         {
             Console.WriteLine("ProcessPaymentStep: Executing");
             var data = context.Data;
-            if (_balancer != null && _serviceBus != null)
+            if (_paymentApi != null)
             {
-                var instance = await _balancer.SelectInstanceAsync("PaymentService");
-                await _serviceBus.SendAsync<object, object>(instance, new { Action = "Pay", Data = data });
-                Console.WriteLine($"ProcessPaymentStep: Payment processed via {instance}");
+                var request = new PaymentRequest { /* map from data */ };
+                var response = await _paymentApi.HandleAsync(request);
+                Console.WriteLine($"ProcessPaymentStep: Payment processed, response: {response}");
             }
             else
             {
-                Console.WriteLine("ProcessPaymentStep: No infrastructure, simulated execution");
+                Console.WriteLine("ProcessPaymentStep: No API, simulated execution");
             }
         }
 
@@ -38,15 +43,15 @@ namespace Orchestrator.Steps
         {
             Console.WriteLine($"ProcessPaymentStep: Compensating (refund payment) due to failure in {failedStep?.GetType().Name}: {sagaFailure.Message}");
             var data = context.Data;
-            if (_balancer != null && _serviceBus != null)
+            if (_paymentApi != null)
             {
-                var instance = await _balancer.SelectInstanceAsync("PaymentService");
-                await _serviceBus.SendAsync<object, object>(instance, new { Action = "Refund", Data = data });
-                Console.WriteLine($"ProcessPaymentStep: Payment refunded via {instance}");
+                var request = new PaymentRequest { /* map from data, indicate refund */ };
+                var response = await _paymentApi.HandleAsync(request);
+                Console.WriteLine($"ProcessPaymentStep: Payment refunded, response: {response}");
             }
             else
             {
-                Console.WriteLine("ProcessPaymentStep: No infrastructure, simulated compensation");
+                Console.WriteLine("ProcessPaymentStep: No API, simulated compensation");
             }
         }
     }

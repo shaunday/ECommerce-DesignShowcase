@@ -15,7 +15,6 @@
 
 ## Production-Grade System Design TODO
 - [ ] Design durable database abstraction layers for all services (e.g., SQL, NoSQL in production).
-- [ ] Design HTTP/gRPC API abstraction layers for all services.
 - [ ] Design authentication and authorization abstractions (OAuth2, JWT, RBAC/ABAC).
 - [ ] Design centralized logging, tracing, and metrics abstraction layers (e.g., ELK stack, OpenTelemetry, Prometheus in production).
 - [ ] Design auto-scaling, circuit breaker, and fallback logic abstractions.
