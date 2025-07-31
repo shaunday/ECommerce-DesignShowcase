@@ -1,8 +1,7 @@
 # Microservices Architecture Design TODO
 
-> **Note:** This project is a design showcase and learning guide for modern microservices architecture. All items focus on abstraction, documentation, and demonstration of patterns—not real infrastructure or production implementation.
+- API Gateway (Auth, Logging, Cache, SSL offloading) -> Load Balances -> Routing(microservices)
 
----
 
 ## Advanced Saga & Workflow Patterns
 - [ ] Design saga state persistence abstraction (ISagaStateStore) to illustrate how sagas survive restarts and resume workflows.
@@ -11,7 +10,6 @@
 - [ ] Ensure idempotency and safe re-execution patterns for saga steps (track completed steps, allow retries in design).
 - [ ] Document custom failure policy patterns for saga steps (retry, skip, escalate, etc.).
 
----
 
 ## Production-Grade System Design TODO
 - [ ] Design durable database abstraction layers for all services (e.g., SQL, NoSQL in production).
